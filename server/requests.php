@@ -1,6 +1,7 @@
 <?php
-    include("../common/db.php");
     session_start();
+    include("../common/db.php");
+    
 
     if(isset($_POST['signUp'])){
         $fullname=$_POST['fullname'];
@@ -14,9 +15,10 @@
 
         $result=$user->execute();
         if($result){
-            $_SESSION["user"]=["username"=>$username,"email"=>$email,"user_id"=>$user->insert_id];
+            $_SESSION["user"]=["username"=>$username,"email"=>$email,"user_id"=>$conn->insert_id];
             header("location: /test/index.php");
             exit();
+
         }else{
             echo "not executed" ;
         }
@@ -31,36 +33,34 @@
         if($result->num_rows==1){
             foreach($result as $row){
                 $username=$row['username'];
-                $user_id=$row['id'];
+                $user_id=$row['uid'];
             }
             $_SESSION["user"]=["username"=> $username, "email" => $email,"user_id"=>$user_id];
             header("Location: /test");
         }else{
-            echo "New user not registered";
+            echo "Invalid credentials.";
         }
 
     } else if(isset($_GET['logOut'])){
         session_unset();
         header("Location: /test/index.php");
-        session_destroy();
-        echo "registered.";
     }else if(isset($_POST['submit'])) {
         $title=$_POST['title'];
         $description=$_POST['description'];
         $category_id=$_POST['category'];
-        if (isset($_SESSION['user']['user_id'])) {  // Check if user_id exists in session
-            $user_id = $_SESSION['user']['user_id'];
-            // Proceed with the rest of your code
-        } else {
-            echo "User not logged in.";
-        }
+       
+        $user_id = $_SESSION['user']['user_id']; 
         
-        $question=$conn->prepare("insert into `question`
+        $question=$conn->prepare("Insert into `question`
         (`id`,`title`,`description`,`category_id`,`user_id`) 
         values (NULL,'$title','$description','$category_id','$user_id');");
 
-    }
-    else {
-        echo "User not registered.";
+        $result=$question->execute();
+        
+        if($result){
+            header("location: /test");
+        }
+    }else {
+        echo "Question is added to website";
     }
 ?>
