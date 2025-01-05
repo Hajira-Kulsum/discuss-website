@@ -1,5 +1,5 @@
 <select id="category" name="category" required>
-    <option value="health">Health</option>
+    <option value="">Select a Category</option>
     <?php
         include('./common/db.php');
         $query="select * from category";
